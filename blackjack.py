@@ -17,10 +17,10 @@ class Card(object):
             self.pointValue = int(value)
 
     def __str__(self):
-        if (self.isHidden):
-            return('[XX]')
+        if self.isHidden:
+            return '[XX]'
         else:
-            return('[' + str(self.value) + self.suit + ']')
+            return '[' + str(self.value) + self.suit + ']'
 
     def getSuite(self):
         return self.suit
@@ -45,6 +45,27 @@ class Card(object):
 
     def isAce(self):
         return self.value == 'A'
+
+
+class Deck(object):
+    def __init__(self):
+        cardsInDeck = []
+        suits = ['S', 'H', 'D', 'C']
+        values = ['A', 'K', 'Q', 'J', '10', '9', '8', '7', '6', '5', '4', '3', '2']
+        for suit in suits:
+            for value in values:
+                cardsInDeck.append(Card(suit,value, False))
+
+    #self.cardsInDeck = cardsInDeck[:]
+
+    def __str__(self): #Only used as a debugger
+        return 'The Deck has ' +str(len(self.cardsInDeck)) + ' cards left.'
+
+    def dealCard(self):
+        card = random.choice(self.cardsInDeck)
+        self.cardsInDeck.remove(card)
+        return card
+
 
 
 class Dealer(object):
