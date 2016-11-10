@@ -56,10 +56,10 @@ class Deck(object):
             for value in values:
                 cardsInDeck.append(Card(suit,value, False))
 
-    #self.cardsInDeck = cardsInDeck[:]
+        self.cardsInDeck = cardsInDeck[:]
 
-    def __str__(self): #Only used as a debugger
-        return 'The Deck has ' +str(len(self.cardsInDeck)) + ' cards left.'
+    def __str__(self):  #Only used as a debugger
+        return 'The Deck has ' + str(len(self.cardsInDeck)) + ' cards left.'
 
     def dealCard(self):
         card = random.choice(self.cardsInDeck)
@@ -67,17 +67,36 @@ class Deck(object):
         return card
 
 
-
 class Dealer(object):
-    def __init__(self, hand):
-        self.hand = hand
-
+    def __init__(self):
+        pass
 
 class Player(object):
-    def __init__(self, hand, balance=0):
+    def __init__(self, balance=0):
         self.balance = balance
-        self.hand = hand
+
 
     def add_money(self, amount):
         self.balance += amount
+
+    def subtract_money(self, amount):
+        self.balance -= amount
+
+    def get_balance(self):
+        return self.balance
+
+deck = Deck()
+player1 = Player()
+dealer = Dealer()
+
+print('Welcome to the game of BlackJack, do you feel lucky?')
+while True:
+    try:
+        player1Balance = int(input(('How much $ would you like to put in your account? ')))
+    except:
+        continue
+    else:
+        break
+player1.add_money(player1Balance)
+print('Your account balance is now ${} '.format(player1.get_balance()))
 
