@@ -71,10 +71,10 @@ class Dealer(object):
     def __init__(self):
         pass
 
+
 class Player(object):
     def __init__(self, balance=0):
         self.balance = balance
-
 
     def add_money(self, amount):
         self.balance += amount
@@ -89,14 +89,39 @@ deck = Deck()
 player1 = Player()
 dealer = Dealer()
 
-print('Welcome to the game of BlackJack, do you feel lucky?')
+print('Welcome to the game of BlackJack, do you feel lucky? \n')
 while True:
     try:
-        player1Balance = int(input(('How much $ would you like to put in your account? ')))
+        player1Balance = int(input('How much $ would you like to put in your account? '))
     except:
+        print('Invalid entry, try again ')
         continue
     else:
         break
 player1.add_money(player1Balance)
 print('Your account balance is now ${} '.format(player1.get_balance()))
+
+while True:
+    while True:
+        try:
+            bet = int(input('How much would you like to bet? '))
+        except:
+            print('Invalid entry, try again ')
+            continue
+        else:
+            if bet > player1Balance:
+                print('Not enough funds available!')
+                continue
+            else:
+                break
+
+    pcard1 = deck.dealCard()
+    pcard2 = deck.dealCard()
+    pvalue = int(pcard1.pointValue) + int(pcard2.pointValue)
+    dcard1 = deck.dealCard()
+    dcard2 = deck.dealCard()
+    dvalue = int(dcard1.pointValue) + int(dcard2.pointValue)
+    print('Your cards:      Dealer cards:')
+    print (str(pcard1) + ' ' + str(pcard2) + '         ' + str(dcard1) + ' ' + str(dcard2))
+
 
