@@ -120,8 +120,45 @@ while True:
     pvalue = int(pcard1.pointValue) + int(pcard2.pointValue)
     dcard1 = deck.dealCard()
     dcard2 = deck.dealCard()
+    dcard2.hideCard()
     dvalue = int(dcard1.pointValue) + int(dcard2.pointValue)
     print('Your cards:      Dealer cards:')
     print (str(pcard1) + ' ' + str(pcard2) + '         ' + str(dcard1) + ' ' + str(dcard2))
+
+    if pcard1.value == pcard2.value:
+        try:
+            answer = str('Do you want to split? Y or N')
+        except:
+            print('Invalid entry, try again \n')
+            continue
+        else:
+            if answer.upper() == 'N':
+                break
+            else:
+                pcard3 = deck.dealCard()
+                pcard4 = deck.dealCard()
+                pvalue1 = int(pcard1.pointValue) + int(pcard3.pointValue)
+                pvalue2 = int(pcard2.pointValue) + int(pcard4.pointValue)
+                print('Your cards:          Dealer cards:')
+                print(' ' + str(pcard1) + ' ' + str(pcard2) + '    ' + str(dcard1))
+                print(' ' + str(pcard3) + ' ' + str(pcard4) + '    ' + str(dcard2))
+### FINISH DOUBLES HERE
+
+    if pvalue == 21:
+        dcard2.revealCard()
+        print('Your cards:      Dealer cards:')
+        print(str(pcard1) + ' ' + str(pcard2) + '         ' + str(dcard1) + ' ' + str(dcard2))
+
+        if pvalue == dvalue:
+            print('Push: Bet returned \n')
+        else:
+            continue
+
+        if dvalue >= 17:
+            player1Balance += bet
+            print('You win! Your balance is now {} \n'.format(player1Balance))
+        else:
+            
+
 
 
