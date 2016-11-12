@@ -70,9 +70,6 @@ class Deck(object):
 
 class Hand(object):
 
-    hasAce = False
-    dealtPair = False
-
     def __init__(self, deck):
         self.hand = []
         self.cardValue = []
@@ -84,6 +81,10 @@ class Hand(object):
         self.cardValue.append(self.card2.getValue())
         self.hand.append(self.card1)
         self.hand.append(self.card2)
+        if self.card1.getValue() == self.card2.getValue():
+            self.dealtPair = True
+        if self.card1.getValue() == 'A' or self.card2.getValue() == 'A':
+            self.hasAce = True
 
 
     def add_card(self, deck):
