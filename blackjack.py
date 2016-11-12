@@ -85,10 +85,11 @@ class Hand(object):
         self.hand.append(self.card1)
         self.hand.append(self.card2)
 
-'''
+
     def add_card(self, deck):
-        self.
-'''
+        self.newCard = deck.dealCard()
+
+
 
 '''
 Process for dealing cards:
@@ -102,8 +103,8 @@ Have to have way to:
 
 class PairDealt(object):
     def __init(self, hand):
-        pass
-
+        self.hand1 = self.hand[0]
+        self.hand1 = self.hand[1]
 
 
 
