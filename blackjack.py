@@ -3,184 +3,138 @@
 import random
 
 
-class Card(object):
-    pointValue = 0
-    def __init__(self, suit, value, isHidden):
+class Card:
+
+    def __init__(self, suit, value, is_hidden):
+        self.point_value = 0
         self.suit = suit
         self.value = value
-        self.isHidden = isHidden
+        self.is_hidden = is_hidden
 
         if self.value == 'A':
-            self.pointValue = 11
+            self.point_value = 11
         elif self.value in ['K', 'Q', 'J']:
-            self.pointValue = 10
+            self.point_value = 10
         elif value in ['2', '3', '4', '5', '6', '7', '8', '9', '10']:
-            self.pointValue = int(value)
+            self.point_value = int(value)
 
     def __str__(self):
-        if self.isHidden:
+        if self.is_hidden:
             return '[XX]'
         else:
             return '[' + str(self.value) + self.suit + ']'
 
-    def getSuite(self):
-        return self.suit
+    def hide_card(self):
+        self.is_hidden = True
 
-    def getValue(self):
-        return self.value
-
-    def getPointValue(self):
-        return self.pointValue
-
-    def setPointValue(self, pointValue):
-        self.pointValue = pointValue
-
-    def isHidden(self):
-        return self.isHidden
-
-    def hideCard(self):
-        self.isHidden = True
-
-    def revealCard(self):
-        self.isHidden = False
-
-    def isAce(self):
-        return self.value == 'A'
+    def reveal_card(self):
+        self.is_hidden = False
 
 
-class Deck(object):
+class Deck:
     def __init__(self):
-        cardsInDeck = []
+        cards_in_deck = []
         suits = ['S', 'H', 'D', 'C']
         values = ['A', 'K', 'Q', 'J', '10', '9', '8', '7', '6', '5', '4', '3', '2']
         for suit in suits:
             for value in values:
-                cardsInDeck.append(Card(suit,value, False))
+                cards_in_deck.append(Card(suit, value, False))
 
-        self.cardsInDeck = cardsInDeck[:]
+        self.cards_in_deck = cards_in_deck[:]
 
-    def __str__(self):  #Only used as a debugger
-        return 'The Deck has ' + str(len(self.cardsInDeck)) + ' cards left.'
+    def __str__(self):  # Only used as a debugger
+        return 'The Deck has ' + str(len(self.cards_in_deck)) + ' cards left.'
 
-    def dealCard(self):
-        card = random.choice(self.cardsInDeck)
-        self.cardsInDeck.remove(card)
+    def deal_card(self):
+        card = random.choice(self.cards_in_deck)
+        self.cards_in_deck.remove(card)
         return card
 
 
-class Hand(object):
-
+class Hand:
     def __init__(self, deck):
+        self.pair_dealt = False
         self.hand = []
-        self.cardValue = []
-        self.card1 = deck.dealCard()
-        self.score = self.card1.pointValue
-        self.cardValue.append(self.card1.getValue())
-        self.card2 = deck.dealCard()
-        self.score += self.card2.pointValue
-        self.cardValue.append(self.card2.getValue())
+        self.hand_values = []
+        self.num_of_aces = 0
+        self.card1 = deck.deal_card()
+        self.score = self.card1.point_value
+        self.hand_values.append(self.card1.value)
+        if self.card1.value == 'A':
+            self.num_of_aces += 1
+        self.card2 = deck.deal_card()
+        self.score += self.card2.point_value
+        self.hand_values.append(self.card2.value)
+        if self.card2.value == 'A':
+            self.num_of_aces += 1
         self.hand.append(self.card1)
         self.hand.append(self.card2)
-        if self.card1.getValue() == self.card2.getValue():
-            self.dealtPair = True
-        if self.card1.getValue() == 'A' or self.card2.getValue() == 'A':
-            self.hasAce = True
+        if self.hand_values[0] == self.hand_values[1]:
+            self.pair_dealt = True
 
-
-    def add_card(self, deck):
-        self.newCard = deck.dealCard()
-
-
-
+    def deal_card(self, deck):
+        self.new_card = deck.deal_card()
+        self.score +=self.new_card.point_value
+        self.hand_values.append(self.new_card.value)
+        self.hand.append(self.new_card)
+        if self.score > 21:
+            if self.num_of_aces:
+                self.score -=10
+                self.num_of_aces -=1
 '''
-Process for dealing cards:
- initialize with getting 2 cards, check for pairs, return pair flag, sum score, set Ace flag, add cards to hand list
-
 Have to have way to:
     add another card to hand: which would update score, if score is over 21 check for ace, if ace, adjust score for ace = 1
-    print hand (for i in hand print i' ')
-
 '''
 
-class PairDealt(object):
-    def __init(self, hand):
-        self.hand1 = self.hand[0]
-        self.hand1 = self.hand[1]
 
+def split_deal(hand, deck):
+    hand1 = hand[0]
+    hand2 = hand[1]
 
+def hit_or_stay(answer, hand, deck):
+    pass
 
-
-class Player(object):
-    def __init__(self, balance=0):
-        self.balance = balance
-
-    def add_money(self, amount):
-        self.balance += amount
-
-    def subtract_money(self, amount):
-        self.balance -= amount
-
-    def get_balance(self):
-        return self.balance
-
-
-
-deck = Deck()
-player1 = Player()
-playerHand = Hand(deck)
-dealerHand = Hand(deck)
-dealerHand.card2.hideCard()
-
-print(*playerHand.hand, sep=' ')
+def set_wager(balance):
+    while True:
+        try:
+            wager = int(input('How much would you like to wager? '))
+        except(ValueError, TypeError):
+            print('Invalid entry, try again ')
+            continue
+        else:
+            break
+    if wager <= balance:
+        return wager
+    else:
+        print('Your wager is too high.')
+        set_wager(balance)
 
 
 print('Welcome to the game of BlackJack, do you feel lucky? \n')
 while True:
     try:
-        player1Balance = int(input('How much $ would you like to put in your account? '))
+        player1_balance = int(input('How much $ would you like to put in your account? '))
     except:
         print('Invalid entry, try again ')
         continue
     else:
         break
-player1.add_money(player1Balance)
-print('Your account balance is now ${} \n'.format(player1.get_balance()))
+print('Your account balance is now ${} \n'.format(player1_balance))
 
 while True:
-    while True:
-        try:
-            bet = int(input('How much would you like to bet? '))
-        except:
-            print('Invalid entry, try again ')
-            continue
-        else:
-            if bet > player1Balance:
-                print('Not enough funds available!')
-                continue
-            else:
-                break
+    new_deck = Deck()
+    player_hand = Hand(new_deck)
+    dealer_hand = Hand(new_deck)
+    dealer_hand.card2.hide_card()
 
-
-
-
-
-'''
- FINISH DOUBLES HERE
-
-    if pvalue == 21:
-        dcard2.revealCard()
-        print('Your cards:      Dealer cards:')
-        print(str(pcard1) + ' ' + str(pcard2) + '         ' + str(dcard1) + ' ' + str(dcard2))
-
-        if pvalue == dvalue:
-            print('Push: Bet returned \n')
-        else:
-            continue
-
-        if dvalue >= 17:
-            player1Balance += bet
-            print('You win! Your balance is now {} \n'.format(player1Balance))
-        else:
-
-'''
-
+    if player1_balance > 0:
+        wager = set_wager(player1_balance)
+        print("\nDealer hand is: ", end='')
+        print(*dealer_hand.hand, sep=' ')
+        print('Your hand is: ', end = '')
+        print(*player_hand.hand, sep=' ')
+        if player_hand.pair_dealt == False:
+            hit_or_stay = input('Would you like to (h)it or (s)tay? h or s ')
+    else:
+        print('You have no funds to bet, good-bye.')
+        break
