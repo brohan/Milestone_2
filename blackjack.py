@@ -92,7 +92,7 @@ def split_deal(hand, deck):
     hand2 = hand[1]
 
 def hit_or_stay(answer, hand, deck):
-    pass
+    pass # Add items to take a hit
 
 def set_wager(balance):
     while True:
