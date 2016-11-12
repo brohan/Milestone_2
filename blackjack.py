@@ -4,6 +4,7 @@ import random
 
 
 class Card(object):
+    pointValue = 0
     def __init__(self, suit, value, isHidden):
         self.suit = suit
         self.value = value
@@ -67,9 +68,44 @@ class Deck(object):
         return card
 
 
-class Dealer(object):
-    def __init__(self):
+class Hand(object):
+
+    hasAce = False
+    dealtPair = False
+
+    def __init__(self, deck):
+        self.hand = []
+        self.cardValue = []
+        self.card1 = deck.dealCard()
+        self.score = self.card1.pointValue
+        self.cardValue.append(self.card1.getValue())
+        self.card2 = deck.dealCard()
+        self.score += self.card2.pointValue
+        self.cardValue.append(self.card2.getValue())
+        self.hand.append(self.card1)
+        self.hand.append(self.card2)
+
+'''
+    def add_card(self, deck):
+        self.
+'''
+
+'''
+Process for dealing cards:
+ initialize with getting 2 cards, check for pairs, return pair flag, sum score, set Ace flag, add cards to hand list
+
+Have to have way to:
+    add another card to hand: which would update score, if score is over 21 check for ace, if ace, adjust score for ace = 1
+    print hand (for i in hand print i' ')
+
+'''
+
+class PairDealt(object):
+    def __init(self, hand):
         pass
+
+
+
 
 
 class Player(object):
@@ -85,9 +121,16 @@ class Player(object):
     def get_balance(self):
         return self.balance
 
+
+
 deck = Deck()
 player1 = Player()
-dealer = Dealer()
+playerHand = Hand(deck)
+dealerHand = Hand(deck)
+dealerHand.card2.hideCard()
+
+print(*playerHand.hand, sep=' ')
+
 
 print('Welcome to the game of BlackJack, do you feel lucky? \n')
 while True:
@@ -99,7 +142,7 @@ while True:
     else:
         break
 player1.add_money(player1Balance)
-print('Your account balance is now ${} '.format(player1.get_balance()))
+print('Your account balance is now ${} \n'.format(player1.get_balance()))
 
 while True:
     while True:
@@ -115,34 +158,12 @@ while True:
             else:
                 break
 
-    pcard1 = deck.dealCard()
-    pcard2 = deck.dealCard()
-    pvalue = int(pcard1.pointValue) + int(pcard2.pointValue)
-    dcard1 = deck.dealCard()
-    dcard2 = deck.dealCard()
-    dcard2.hideCard()
-    dvalue = int(dcard1.pointValue) + int(dcard2.pointValue)
-    print('Your cards:      Dealer cards:')
-    print (str(pcard1) + ' ' + str(pcard2) + '         ' + str(dcard1) + ' ' + str(dcard2))
 
-    if pcard1.value == pcard2.value:
-        try:
-            answer = str('Do you want to split? Y or N')
-        except:
-            print('Invalid entry, try again \n')
-            continue
-        else:
-            if answer.upper() == 'N':
-                break
-            else:
-                pcard3 = deck.dealCard()
-                pcard4 = deck.dealCard()
-                pvalue1 = int(pcard1.pointValue) + int(pcard3.pointValue)
-                pvalue2 = int(pcard2.pointValue) + int(pcard4.pointValue)
-                print('Your cards:          Dealer cards:')
-                print(' ' + str(pcard1) + ' ' + str(pcard2) + '    ' + str(dcard1))
-                print(' ' + str(pcard3) + ' ' + str(pcard4) + '    ' + str(dcard2))
-### FINISH DOUBLES HERE
+
+
+
+'''
+ FINISH DOUBLES HERE
 
     if pvalue == 21:
         dcard2.revealCard()
@@ -158,7 +179,6 @@ while True:
             player1Balance += bet
             print('You win! Your balance is now {} \n'.format(player1Balance))
         else:
-            
 
-
+'''
 
