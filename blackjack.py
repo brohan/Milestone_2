@@ -74,6 +74,8 @@ class Hand:
 
     def deal_card(self, deck):
         self.new_card = deck.deal_card()
+        if self.new_card.value == 'A':
+            self.num_of_aces += 1
         self.score +=self.new_card.point_value
         self.hand_values.append(self.new_card.value)
         self.hand.append(self.new_card)
@@ -91,8 +93,33 @@ def split_deal(hand, deck):
     hand1 = hand[0]
     hand2 = hand[1]
 
-def hit_or_stay(answer, hand, deck):
-    pass # Add items to take a hit
+def hit_or_stay(player_hand, dealer_hand, deck, wager):
+    answer = input('Would you like to (h)it or (s)tay? h or s ')
+    if answer.upper() == 'H':
+        player_hand.deal_card(deck)
+        print('Your new hand is:', end=' ')
+        print(*player_hand.hand)
+        if player_hand.score > 21:
+            print('Your over 21, you lost')
+            wager = -wager
+            return wager
+        else:
+            hit_or_stay(hand, deck)
+    elif answer.upper() == 'S':
+        dealer_hand.card2.reveal_card()
+        print("Dealer's cards:", end=' ')
+        print(*dealer_hand.hand, sep=' ')
+        if dealer_hand.score > player_hand.score:
+            print('Dealer wins')
+            wager = -wager
+            return wager
+        elif dealer_hand.score < player_hand.score:
+            return wager
+        else:
+            return 0
+    else:
+        hit_or_stay(hand, deck)
+
 
 def set_wager(balance):
     while True:
@@ -111,15 +138,17 @@ def set_wager(balance):
 
 
 print('Welcome to the game of BlackJack, do you feel lucky? \n')
+wager = 0
+player_balance = 0
 while True:
     try:
-        player1_balance = int(input('How much $ would you like to put in your account? '))
+        player_balance = int(input('How much $ would you like to put in your account? '))
     except:
         print('Invalid entry, try again ')
         continue
     else:
         break
-print('Your account balance is now ${} \n'.format(player1_balance))
+print('Your account balance is now ${} \n'.format(player_balance))
 
 while True:
     new_deck = Deck()
@@ -127,14 +156,35 @@ while True:
     dealer_hand = Hand(new_deck)
     dealer_hand.card2.hide_card()
 
-    if player1_balance > 0:
-        wager = set_wager(player1_balance)
+    if player_balance > 0:
+        wager = set_wager(player_balance)
         print("\nDealer hand is: ", end='')
         print(*dealer_hand.hand, sep=' ')
         print('Your hand is: ', end = '')
         print(*player_hand.hand, sep=' ')
+
         if player_hand.pair_dealt == False:
-            hit_or_stay = input('Would you like to (h)it or (s)tay? h or s ')
+
+            if player_hand.score == 21:
+                print('You have a natural blackjack!')
+                dealer_hand.card2.reveal_card()
+                print("Dealer's cards:", end=' ')
+                print(*dealer_hand.hand, sep=' ')
+
+                if dealer_hand.score == 21:
+                    print("Dealer has 21, it's a push")
+                else:
+                    winnings = 1.5 * wager
+                    print('You win ${}\n'.format(winnings))
+                    player_balance += winnings
+            else:
+                result = hit_or_stay(player_hand, dealer_hand, new_deck, wager)
+                player_balance += result
+                print('You have a new balance of ${}\n'.format(player_balance))
+
+
+        else:
+            split_deal(player_hand.hand, new_deck)
     else:
         print('You have no funds to bet, good-bye.')
         break
