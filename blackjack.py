@@ -236,7 +236,7 @@ def set_wager(balance):
 
 print('Welcome to the game of BlackJack, do you feel lucky? \n')
 
-player_balance = 0
+player_balance = 0.0
 
 while True:
     try:
