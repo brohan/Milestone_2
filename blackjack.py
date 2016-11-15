@@ -126,15 +126,14 @@ def hit_or_stay(player_hand, dealer_hand, deck, wager):
 
 
 def split_hit(hand, deck):
-    print('Current hand: ')
     print(*hand.hand, sep=' ')
     hand.deal_card(deck)
-    print('Your new hand is:', end=' ')
+    print('Your current hand is now:', end=' ')
     print(*hand.hand)
     if hand.score > 21:
         print('Your over 21, you BUST')
         return hand
-    elif hand == 21:
+    elif hand.score == 21:
         print('Current hand = 21')
         return hand
     else:
@@ -149,6 +148,7 @@ def split_hit(hand, deck):
 
 
 def split_deal(player_hand, dealer_hand, deck, wager):
+    returned_wager = 0
     hand1 = copy.deepcopy(player_hand)
     hand2 = copy.deepcopy(player_hand)
     hand1.hand.pop()
@@ -159,8 +159,63 @@ def split_deal(player_hand, dealer_hand, deck, wager):
     hand2.deal_card(deck)
     print('Your 2nd hand is now:', end=' ')
     print(*hand2.hand, sep=' ')
-    print('Split deal not fully implemented yet, skipping')
-    return 0
+    while True:
+        while True:
+            answer = input('Hand 1, would you like to (h)it or (s)tay? h or s ')
+            if answer.upper() == 'H':
+                hand1 = split_hit(hand1, deck)
+                break
+            elif answer.upper() == 'S':
+                break
+            else:
+                continue
+        answer = input('Hand2, would you like to (h)it or (s)tay? h or s ')
+        if answer.upper() == 'H':
+            hand2 = split_hit(hand2, deck)
+            break
+        elif answer.upper() == 'S':
+            break
+        else:
+            continue
+    dealer_hand.card2.reveal_card()
+    print("Dealer's cards:", end=' ')
+    print(*dealer_hand.hand, sep=' ')
+    while dealer_hand.score < 17 and dealer_hand.score < 21:
+        print("Dealer has less than 17, needs to hit")
+        dealer_hand.deal_card(deck)
+        print("Dealer's new hand is: ", end=' ')
+        print(*dealer_hand.hand)
+    if dealer_hand.score > 21:
+        print('Dealer busts')
+        if hand1.score <= 21:
+            print('Your 1st hand wins. ${} added to your balance'.format(wager))
+            returned_wager += wager
+        else:
+            print('Your 1st hand and the dealer both busted')
+        if hand2.score <= 21:
+            print('Your second hand wins. ${} added to your balance'.format(wager))
+            returned_wager += wager
+        else:
+             print('Your 2nd hand and the dealer both busted')
+        return returned_wager
+    if dealer_hand.score <= 21:
+        if hand1.score < dealer_hand.score:
+            print('Your 1st hand lost')
+            returned_wager += (-wager)
+        elif hand1.score > dealer_hand.score:
+            print('Your 1st hand won!')
+            returned_wager += wager
+        else:
+           print('Your 1st hand pushed')
+        if hand2.score < dealer_hand.score:
+            print('Your 2nd hand lost')
+            returned_wager += (-wager)
+        elif hand2.score > dealer_hand.score:
+            print('Your 2nd hand won!')
+            returned_wager += wager
+        else:
+            print('Your 2nd hand pushed')
+        return returned_wager
 
 
 def set_wager(balance):
@@ -198,14 +253,12 @@ while True:
     player_hand = Hand(new_deck)
     dealer_hand = Hand(new_deck)
     dealer_hand.card2.hide_card()
-
     if player_balance > 0:
         wager = set_wager(player_balance)
         print("\nDealer hand is: ", end='')
         print(*dealer_hand.hand, sep=' ')
         print('Your hand is: ', end = '')
         print(*player_hand.hand, sep=' ')
-
         if player_hand.pair_dealt is False:
 
             if player_hand.score == 21:
