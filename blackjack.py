@@ -76,13 +76,13 @@ class Hand:
         self.new_card = deck.deal_card()
         if self.new_card.value == 'A':
             self.num_of_aces += 1
-        self.score +=self.new_card.point_value
+        self.score += self.new_card.point_value
         self.hand_values.append(self.new_card.value)
         self.hand.append(self.new_card)
         if self.score > 21:
             if self.num_of_aces:
-                self.score -=10
-                self.num_of_aces -=1
+                self.score -= 1
+                self.num_of_aces -= 1
 
 
 def hit_or_stay(player_hand, dealer_hand, deck, wager):
@@ -122,7 +122,14 @@ def hit_or_stay(player_hand, dealer_hand, deck, wager):
     else:
         hit_or_stay(player_hand, dealer_hand, deck, wager)
 
+
+def split_hit(hand, deck):
+    pass
+
+
 def split_deal(player_hand, dealer_hand, deck, wager):
+    hand1 = []
+    hand2 = []
     hand1 = player_hand.hand[0]
     hand2 = player_hand.hand[1]
     hand1.deal_card(deck)
@@ -134,10 +141,11 @@ def split_deal(player_hand, dealer_hand, deck, wager):
     print('Split deal not fully implemented yet, skipping')
     return 0
 
+
 def set_wager(balance):
     while True:
         try:
-            amount_to_bet = int(input('How much would you like to wager? '))
+            amount_to_bet = float(input('How much would you like to wager? '))
         except(ValueError, TypeError):
             print('Invalid entry, try again ')
             continue
@@ -156,7 +164,7 @@ player_balance = 0
 
 while True:
     try:
-        player_balance = int(input('How much $ would you like to put in your account? '))
+        player_balance = float(input('How much $ would you like to put in your account? '))
     except:
         print('Invalid entry, try again ')
         continue
@@ -177,7 +185,7 @@ while True:
         print('Your hand is: ', end = '')
         print(*player_hand.hand, sep=' ')
 
-        if player_hand.pair_dealt == False:
+        if player_hand.pair_dealt is False:
 
             if player_hand.score == 21:
                 print('You have a natural blackjack!')
@@ -196,9 +204,7 @@ while True:
                 player_balance += result
                 print('You have a new balance of ${}\n'.format(player_balance))
 
-
         else:
-
             result = split_deal(player_hand, dealer_hand, new_deck, wager)
             player_balance += result
             print('You have a new balance of ${}\n'.format(player_balance))
