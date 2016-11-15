@@ -1,6 +1,7 @@
 #! /usr/bin/python3
 
 import random
+import copy
 
 
 class Card:
@@ -81,7 +82,7 @@ class Hand:
         self.hand.append(self.new_card)
         if self.score > 21:
             if self.num_of_aces:
-                self.score -= 1
+                self.score -= 10
                 self.num_of_aces -= 1
 
 
@@ -117,6 +118,7 @@ def hit_or_stay(player_hand, dealer_hand, deck, wager):
             print('You win!')
             return wager
         else:
+            print('Push')
             return 0
 
     else:
@@ -124,14 +126,33 @@ def hit_or_stay(player_hand, dealer_hand, deck, wager):
 
 
 def split_hit(hand, deck):
-    pass
+    print('Current hand: ')
+    print(*hand.hand, sep=' ')
+    hand.deal_card(deck)
+    print('Your new hand is:', end=' ')
+    print(*hand.hand)
+    if hand.score > 21:
+        print('Your over 21, you BUST')
+        return hand
+    elif hand == 21:
+        print('Current hand = 21')
+        return hand
+    else:
+        while True:
+            answer = input('Would you like to (h)it or (s)tay? h or s ')
+            if answer.upper() == 'H':
+                return split_hit(hand, deck)
+            elif answer.upper() == 'S':
+                return hand
+            else:
+                continue
 
 
 def split_deal(player_hand, dealer_hand, deck, wager):
-    hand1 = []
-    hand2 = []
-    hand1 = player_hand.hand[0]
-    hand2 = player_hand.hand[1]
+    hand1 = copy.deepcopy(player_hand)
+    hand2 = copy.deepcopy(player_hand)
+    hand1.hand.pop()
+    hand2.hand.pop(0)
     hand1.deal_card(deck)
     print('Your 1st hand is now:', end=' ')
     print(*hand1.hand, sep=' ')
@@ -199,6 +220,7 @@ while True:
                     winnings = 1.5 * wager
                     print('You win ${}\n'.format(winnings))
                     player_balance += winnings
+                    print('You have a new balance of ${}\n'.format(player_balance))
             else:
                 result = hit_or_stay(player_hand, dealer_hand, new_deck, wager)
                 player_balance += result
