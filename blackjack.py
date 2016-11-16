@@ -267,31 +267,11 @@ while True:
         print(*dealer_hand.hand, sep=' ')
         print('Your hand is: ', end = '')
         print(*player_hand.hand, sep=' ')
-        if player_hand.pair_dealt is True:
-            while True:
-                try:
-                    split_answer = input('Would you like to split? Y or N ')
-                except:
-                    print('Invalid entry, try again ')
-                    continue
-
-                else:
-                    if split_answer.upper() == 'Y':
-                        result = split_deal(player_hand, dealer_hand, new_deck, wager)
-                        player_balance += result
-                        print('You have a new balance of ${}\n'.format(player_balance))
-                        break
-                    elif split_answer.upper() == 'N':
-                        break
-                    else:
-                        continue
-
         if player_hand.score == 21:
             print('You have a natural blackjack!')
             dealer_hand.card2.reveal_card()
             print("Dealer's cards:", end=' ')
             print(*dealer_hand.hand, sep=' ')
-
             if dealer_hand.score == 21:
                 print("Dealer has 21, it's a push")
             else:
@@ -299,6 +279,26 @@ while True:
                 print('You win ${}\n'.format(winnings))
                 player_balance += winnings
                 print('You have a new balance of ${}\n'.format(player_balance))
+        elif player_hand.pair_dealt is True:
+            while True:
+                try:
+                    split_answer = input('Would you like to split? Y or N ')
+                except:
+                    print('Invalid entry, try again ')
+                    continue
+                else:
+                    if split_answer.upper() == 'Y':
+                        result = split_deal(player_hand, dealer_hand, new_deck, wager)
+                        player_balance += result
+                        print('You have a new balance of ${}\n'.format(player_balance))
+                        break
+                    elif split_answer.upper() == 'N':
+                        result = hit_or_stay(player_hand, dealer_hand, new_deck, wager)
+                        player_balance += result
+                        print('You have a new balance of ${}\n'.format(player_balance))
+                        break
+                    else:
+                        continue
         else:
             result = hit_or_stay(player_hand, dealer_hand, new_deck, wager)
             player_balance += result
