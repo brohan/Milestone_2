@@ -130,7 +130,7 @@ def split_hit(hand, deck):
     hand.deal_card(deck)
     print('Your current hand is now:', end=' ')
     print(*hand.hand)
-    if hand.score >= 22:
+    if hand.score > 21:
         print('Your over 21, you BUST')
         return hand
     elif hand.score == 21:
