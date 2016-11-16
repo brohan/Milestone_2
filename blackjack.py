@@ -119,7 +119,7 @@ def hit_or_stay(player_hand, dealer_hand, deck, wager):
             return wager
         else:
             print('Push')
-            return 0
+            return float(0.0)
 
     else:
         hit_or_stay(player_hand, dealer_hand, deck, wager)
@@ -130,7 +130,7 @@ def split_hit(hand, deck):
     hand.deal_card(deck)
     print('Your current hand is now:', end=' ')
     print(*hand.hand)
-    if hand.score > 21:
+    if hand.score >= 22:
         print('Your over 21, you BUST')
         return hand
     elif hand.score == 21:
@@ -142,15 +142,17 @@ def split_hit(hand, deck):
             if answer.upper() == 'H':
                 return split_hit(hand, deck)
             elif answer.upper() == 'S':
+                print('Your current hand is now:', end=' ')
+                print(*hand.hand, sep=' ')
                 return hand
             else:
                 continue
 
 
-def split_deal(player_hand, dealer_hand, deck, wager):
+def split_deal(p_hand, d_hand, deck, wager):
     returned_wager = 0
-    hand1 = copy.deepcopy(player_hand)
-    hand2 = copy.deepcopy(player_hand)
+    hand1 = copy.deepcopy(p_hand)
+    hand2 = copy.deepcopy(p_hand)
     hand1.hand.pop()
     hand2.hand.pop(0)
     hand1.deal_card(deck)
@@ -161,31 +163,31 @@ def split_deal(player_hand, dealer_hand, deck, wager):
     print(*hand2.hand, sep=' ')
     while True:
         while True:
-            answer = input('Hand 1, would you like to (h)it or (s)tay? h or s ')
-            if answer.upper() == 'H':
+            answer_1 = input('Hand 1, would you like to (h)it or (s)tay? h or s ')
+            if answer_1.upper() == 'H':
                 hand1 = split_hit(hand1, deck)
                 break
-            elif answer.upper() == 'S':
+            elif answer_1.upper() == 'S':
                 break
             else:
                 continue
-        answer = input('Hand2, would you like to (h)it or (s)tay? h or s ')
-        if answer.upper() == 'H':
+        answer_2 = input('Hand2, would you like to (h)it or (s)tay? h or s ')
+        if answer_2.upper() == 'H':
             hand2 = split_hit(hand2, deck)
             break
-        elif answer.upper() == 'S':
+        elif answer_2.upper() == 'S':
             break
         else:
             continue
-    dealer_hand.card2.reveal_card()
+    d_hand.card2.reveal_card()
     print("Dealer's cards:", end=' ')
-    print(*dealer_hand.hand, sep=' ')
-    while dealer_hand.score < 17 and dealer_hand.score < 21:
+    print(*d_hand.hand, sep=' ')
+    while d_hand.score < 17 and d_hand.score < 21:
         print("Dealer has less than 17, needs to hit")
-        dealer_hand.deal_card(deck)
+        d_hand.deal_card(deck)
         print("Dealer's new hand is: ", end=' ')
-        print(*dealer_hand.hand)
-    if dealer_hand.score > 21:
+        print(*d_hand.hand)
+    if d_hand.score > 21:
         print('Dealer busts')
         if hand1.score <= 21:
             print('Your 1st hand wins. ${} added to your balance'.format(wager))
@@ -198,23 +200,29 @@ def split_deal(player_hand, dealer_hand, deck, wager):
         else:
              print('Your 2nd hand and the dealer both busted')
         return returned_wager
-    if dealer_hand.score <= 21:
-        if hand1.score < dealer_hand.score:
-            print('Your 1st hand lost')
-            returned_wager += (-wager)
-        elif hand1.score > dealer_hand.score:
-            print('Your 1st hand won!')
-            returned_wager += wager
-        else:
-           print('Your 1st hand pushed')
-        if hand2.score < dealer_hand.score:
-            print('Your 2nd hand lost')
-            returned_wager += (-wager)
-        elif hand2.score > dealer_hand.score:
-            print('Your 2nd hand won!')
-            returned_wager += wager
-        else:
-            print('Your 2nd hand pushed')
+    if d_hand.score < 22:
+        while hand1.score < 22:
+            if hand1.score < d_hand.score:
+                print('Your 1st hand lost')
+                returned_wager += (-wager)
+                break
+            elif hand1.score > d_hand.score:
+                print('Your 1st hand won!')
+                returned_wager += wager
+                break
+            else:
+                print('Your 1st hand pushed')
+        while hand2.score < 22:
+            if hand2.score < d_hand.score:
+                print('Your 2nd hand lost')
+                returned_wager += (-wager)
+                break
+            elif hand2.score > d_hand.score:
+                print('Your 2nd hand won!')
+                returned_wager += wager
+                break
+            else:
+                print('Your 2nd hand pushed')
         return returned_wager
 
 
@@ -259,32 +267,44 @@ while True:
         print(*dealer_hand.hand, sep=' ')
         print('Your hand is: ', end = '')
         print(*player_hand.hand, sep=' ')
-        if player_hand.pair_dealt is False:
+        if player_hand.pair_dealt is True:
+            while True:
+                try:
+                    split_answer = input('Would you like to split? Y or N ')
+                except:
+                    print('Invalid entry, try again ')
+                    continue
 
-            if player_hand.score == 21:
-                print('You have a natural blackjack!')
-                dealer_hand.card2.reveal_card()
-                print("Dealer's cards:", end=' ')
-                print(*dealer_hand.hand, sep=' ')
-
-                if dealer_hand.score == 21:
-                    print("Dealer has 21, it's a push")
                 else:
-                    winnings = 1.5 * wager
-                    print('You win ${}\n'.format(winnings))
-                    player_balance += winnings
-                    print('You have a new balance of ${}\n'.format(player_balance))
-            else:
-                result = hit_or_stay(player_hand, dealer_hand, new_deck, wager)
-                player_balance += result
-                print('You have a new balance of ${}\n'.format(player_balance))
+                    if split_answer.upper() == 'Y':
+                        result = split_deal(player_hand, dealer_hand, new_deck, wager)
+                        player_balance += result
+                        print('You have a new balance of ${}\n'.format(player_balance))
+                        break
+                    elif split_answer.upper() == 'N':
+                        break
+                    else:
+                        continue
 
+        if player_hand.score == 21:
+            print('You have a natural blackjack!')
+            dealer_hand.card2.reveal_card()
+            print("Dealer's cards:", end=' ')
+            print(*dealer_hand.hand, sep=' ')
+
+            if dealer_hand.score == 21:
+                print("Dealer has 21, it's a push")
+            else:
+                winnings = 1.5 * wager
+                print('You win ${}\n'.format(winnings))
+                player_balance += winnings
+                print('You have a new balance of ${}\n'.format(player_balance))
         else:
-            result = split_deal(player_hand, dealer_hand, new_deck, wager)
+            result = hit_or_stay(player_hand, dealer_hand, new_deck, wager)
             player_balance += result
             print('You have a new balance of ${}\n'.format(player_balance))
 
-            pass
+        pass
 
     else:
         print('You have no funds to bet, good-bye.')
