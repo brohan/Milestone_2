@@ -154,7 +154,13 @@ def split_deal(p_hand, d_hand, deck, wager):
     hand1 = copy.deepcopy(p_hand)
     hand2 = copy.deepcopy(p_hand)
     hand1.hand.pop()
+    hand1.score = p_hand.score / 2
+    if p_hand.num_of_aces:
+        hand1.num_of_aces = 1
     hand2.hand.pop(0)
+    hand2.score = p_hand.score / 2
+    if p_hand.num_of_aces:
+        hand2.num_of_aces = 1
     hand1.deal_card(deck)
     print('Your 1st hand is now:', end=' ')
     print(*hand1.hand, sep=' ')
@@ -171,7 +177,7 @@ def split_deal(p_hand, d_hand, deck, wager):
                 break
             else:
                 continue
-        answer_2 = input('Hand2, would you like to (h)it or (s)tay? h or s ')
+        answer_2 = input('Hand 2, would you like to (h)it or (s)tay? h or s ')
         if answer_2.upper() == 'H':
             hand2 = split_hit(hand2, deck)
             break
@@ -194,11 +200,13 @@ def split_deal(p_hand, d_hand, deck, wager):
             returned_wager += wager
         else:
             print('Your 1st hand and the dealer both busted')
+            returned_wager += (-wager)
         if hand2.score <= 21:
             print('Your second hand wins. ${} added to your balance'.format(wager))
             returned_wager += wager
         else:
              print('Your 2nd hand and the dealer both busted')
+             returned_wager += (-wager)
         return returned_wager
     if d_hand.score < 22:
         while hand1.score < 22:
